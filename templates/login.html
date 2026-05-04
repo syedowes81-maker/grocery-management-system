@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FreshCart - Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green-deep:  #1a3d2b;
+    --green-mid:   #2d6a4f;
+    --green-fresh: #52b788;
+    --green-light: #95d5b2;
+    --cream:       #f8f5ef;
+    --text-dark:   #0d1f17;
+    --text-muted:  #6b8c78;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'DM Sans', sans-serif; height: 100vh; display: flex; overflow: hidden; }
+
+  /* LEFT */
+  .left {
+    flex: 1;
+    background: linear-gradient(145deg, #1a3d2b 0%, #2d6a4f 55%, #52b788 100%);
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    text-align: center; padding: 60px 48px;
+    position: relative; overflow: hidden;
+  }
+  .left::before {
+    content: '';
+    position: absolute; width: 500px; height: 500px;
+    border-radius: 50%; border: 2px dashed rgba(255,255,255,0.1);
+    top: -120px; left: -160px;
+    animation: spin 40s linear infinite;
+  }
+  .left::after {
+    content: '';
+    position: absolute; width: 300px; height: 300px;
+    border-radius: 50%; border: 1px solid rgba(255,255,255,0.07);
+    bottom: -70px; right: -90px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .left-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.8rem; font-weight: 900;
+    color: white; letter-spacing: -1px;
+    margin-bottom: 12px; position: relative; z-index: 1;
+  }
+  .left-logo span { color: var(--green-light); }
+
+  .left-tagline {
+    font-size: 1.05rem; color: rgba(255,255,255,0.72);
+    font-weight: 300; line-height: 1.65;
+    max-width: 300px; position: relative; z-index: 1;
+    margin-bottom: 48px;
+  }
+
+  .floaters {
+    display: flex; gap: 16px; flex-wrap: wrap;
+    justify-content: center; position: relative; z-index: 1;
+    margin-bottom: 48px;
+  }
+  .floater {
+    font-size: 1.9rem;
+    background: rgba(255,255,255,0.12);
+    border-radius: 50%; width: 54px; height: 54px;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid rgba(255,255,255,0.15);
+    animation: bob 3s ease-in-out infinite;
+  }
+  .floater:nth-child(2) { animation-delay: 0.3s; }
+  .floater:nth-child(3) { animation-delay: 0.6s; }
+  .floater:nth-child(4) { animation-delay: 0.9s; }
+  .floater:nth-child(5) { animation-delay: 1.2s; }
+  .floater:nth-child(6) { animation-delay: 1.5s; }
+  @keyframes bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }
+
+  .left-stats { display: flex; gap: 36px; position: relative; z-index: 1; }
+  .stat { text-align: center; }
+  .stat-num { font-family: 'Playfair Display', serif; font-size: 1.7rem; font-weight: 900; color: var(--green-light); }
+  .stat-lbl { font-size: 0.73rem; color: rgba(255,255,255,0.5); letter-spacing: 0.5px; text-transform: uppercase; margin-top: 2px; }
+
+  /* RIGHT */
+  .right {
+    width: 460px; flex-shrink: 0;
+    background: var(--cream);
+    display: flex; align-items: center; justify-content: center;
+    padding: 48px 44px;
+  }
+  .card { width: 100%; animation: fadeUp 0.65s ease both; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: translateY(0); } }
+
+  .card h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem; font-weight: 900;
+    color: var(--green-deep); letter-spacing: -0.5px;
+    margin-bottom: 6px;
+  }
+  .card .subtitle { font-size: 0.9rem; color: var(--text-muted); font-weight: 300; margin-bottom: 32px; }
+
+  .error-box {
+    background: #fff0f0; border: 1px solid #f5c0c0;
+    color: #c0392b; border-radius: 10px;
+    padding: 11px 15px; font-size: 0.85rem;
+    margin-bottom: 20px; display: flex; align-items: center; gap: 8px;
+  }
+
+  .field { margin-bottom: 18px; }
+  .field label {
+    display: block; font-size: 0.78rem; font-weight: 600;
+    color: var(--green-deep); letter-spacing: 0.4px;
+    text-transform: uppercase; margin-bottom: 7px;
+  }
+  .field input {
+    width: 100%; padding: 13px 16px;
+    border: 1.5px solid rgba(82,183,136,0.25);
+    border-radius: 12px; background: white;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem; color: var(--text-dark); outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .field input:focus {
+    border-color: var(--green-fresh);
+    box-shadow: 0 0 0 3px rgba(82,183,136,0.12);
+  }
+  .field input::placeholder { color: var(--text-muted); }
+
+  .login-btn {
+    width: 100%; padding: 14px; border: none;
+    border-radius: 50px; background: var(--green-deep); color: white;
+    font-family: 'DM Sans', sans-serif; font-size: 1rem; font-weight: 600;
+    cursor: pointer; transition: all 0.25s; margin-top: 6px;
+    box-shadow: 0 6px 20px rgba(26,61,43,0.25); letter-spacing: 0.2px;
+  }
+  .login-btn:hover { background: var(--green-mid); transform: translateY(-2px); box-shadow: 0 10px 28px rgba(26,61,43,0.35); }
+
+  .hint {
+    margin-top: 22px; text-align: center;
+    font-size: 0.82rem; color: var(--text-muted);
+    background: rgba(82,183,136,0.08);
+    border-radius: 10px; padding: 10px 14px;
+  }
+  .hint strong { color: var(--green-mid); }
+
+  @media (max-width: 700px) { .left { display: none; } .right { width: 100%; } }
+</style>
+</head>
+<body>
+
+<div class="left">
+  <div class="left-logo">Fresh<span>Cart</span> 🛒</div>
+  <p class="left-tagline">Fresh groceries handpicked daily, delivered straight to your doorstep.</p>
+  <div class="floaters">
+    <div class="floater">🍎</div>
+    <div class="floater">🥦</div>
+    <div class="floater">🥛</div>
+    <div class="floater">🍗</div>
+    <div class="floater">🍿</div>
+    <div class="floater">🧃</div>
+  </div>
+  <div class="left-stats">
+    <div class="stat"><div class="stat-num">120+</div><div class="stat-lbl">Products</div></div>
+    <div class="stat"><div class="stat-num">6</div><div class="stat-lbl">Categories</div></div>
+    <div class="stat"><div class="stat-num">&#8377;0</div><div class="stat-lbl">Delivery</div></div>
+  </div>
+</div>
+
+<div class="right">
+  <div class="card">
+    <h2>Welcome back &#128075;</h2>
+    <p class="subtitle">Sign in to your FreshCart account</p>
+
+    {% if error %}
+    <div class="error-box">&#9888;&#65039; {{ error }}</div>
+    {% endif %}
+
+    <form method="POST" action="/">
+      <div class="field">
+        <label>Username</label>
+        <input name="username" type="text" placeholder="Enter username" autocomplete="username" required>
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input name="password" type="password" placeholder="Enter password" autocomplete="current-password" required>
+      </div>
+      <button type="submit" class="login-btn">Sign In &#8594;</button>
+    </form>
+
+    <div class="hint">Demo credentials: <strong>admin</strong> / <strong>admin</strong></div>
+  </div>
+</div>
+
+</body>
+</html>

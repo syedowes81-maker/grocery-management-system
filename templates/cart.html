@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cart – FreshCart</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green-deep:  #1a3d2b;
+    --green-mid:   #2d6a4f;
+    --green-fresh: #52b788;
+    --green-light: #95d5b2;
+    --cream:       #f8f5ef;
+    --text-dark:   #0d1f17;
+    --text-muted:  #6b8c78;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text-dark); min-height: 100vh; }
+
+  /* ── TOPBAR ── */
+  .topbar {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(248,245,239,0.96); backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(82,183,136,0.18);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 36px;
+  }
+  .topbar-logo { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 900; color: var(--green-deep); text-decoration: none; }
+  .topbar-logo span { color: var(--green-fresh); }
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+  .nav-link { color: var(--text-muted); text-decoration: none; font-size: 0.88rem; font-weight: 500; padding: 9px 16px; border-radius: 50px; border: 1px solid rgba(82,183,136,0.2); transition: all 0.2s; }
+  .nav-link:hover { background: rgba(82,183,136,0.08); color: var(--green-mid); }
+  .logout-btn { color: #c0392b; text-decoration: none; font-size: 0.85rem; font-weight: 500; padding: 9px 16px; border-radius: 50px; border: 1px solid rgba(192,57,43,0.2); transition: all 0.2s; }
+  .logout-btn:hover { background: rgba(192,57,43,0.06); }
+
+  /* ── PAGE ── */
+  .page { max-width: 1100px; margin: 0 auto; padding: 40px 28px 80px; }
+  .page-title { font-family: 'Playfair Display', serif; font-size: 2.2rem; font-weight: 900; color: var(--green-deep); letter-spacing: -1px; margin-bottom: 6px; }
+  .page-sub { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 36px; }
+
+  /* ── LAYOUT ── */
+  .cart-layout { display: grid; grid-template-columns: 1fr 340px; gap: 28px; align-items: start; }
+  .cart-items { display: flex; flex-direction: column; gap: 14px; }
+
+  /* ── CART ITEM CARD ── */
+  .cart-item {
+    background: white; border-radius: 18px; border: 1px solid rgba(82,183,136,0.1);
+    padding: 20px 22px; display: flex; align-items: center; gap: 18px;
+    transition: box-shadow 0.2s, transform 0.2s; animation: slideIn 0.3s ease both;
+  }
+  @keyframes slideIn { from { opacity:0; transform:translateX(-14px); } to { opacity:1; transform:translateX(0); } }
+  .cart-item:hover { box-shadow: 0 8px 28px rgba(82,183,136,0.12); transform: translateY(-2px); }
+
+  .item-emoji { width: 68px; height: 68px; border-radius: 16px; background: linear-gradient(135deg,#e8f5ee,#d4f0e2); display: flex; align-items: center; justify-content: center; font-size: 2.2rem; flex-shrink: 0; }
+  .item-info { flex: 1; min-width: 0; }
+  .item-name { font-size: 1rem; font-weight: 600; color: var(--green-deep); margin-bottom: 3px; }
+  .item-unit-price { font-size: 0.8rem; color: var(--text-muted); }
+
+  .item-controls { display: flex; align-items: center; background: var(--cream); border-radius: 50px; border: 1px solid rgba(82,183,136,0.2); overflow: hidden; }
+  .qty-btn { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; text-decoration: none; font-size: 1.2rem; font-weight: 700; color: var(--green-deep); transition: background 0.15s, color 0.15s; }
+  .qty-btn:hover { background: var(--green-deep); color: white; }
+  .qty-num { min-width: 36px; text-align: center; font-size: 0.95rem; font-weight: 600; color: var(--green-deep); }
+
+  .item-subtotal { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; color: var(--green-deep); min-width: 72px; text-align: right; }
+  .remove-btn { display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; text-decoration: none; color: #c0392b; font-size: 1rem; background: rgba(192,57,43,0.06); border: 1px solid rgba(192,57,43,0.15); transition: all 0.2s; flex-shrink: 0; }
+  .remove-btn:hover { background: rgba(192,57,43,0.14); transform: scale(1.1); }
+
+  /* ── EMPTY STATE ── */
+  .empty-state { background: white; border-radius: 24px; padding: 80px 40px; text-align: center; border: 1px solid rgba(82,183,136,0.1); }
+  .empty-icon { font-size: 5rem; margin-bottom: 16px; display: block; }
+  .empty-state h3 { font-family: 'Playfair Display', serif; font-size: 1.7rem; color: var(--green-deep); margin-bottom: 10px; }
+  .empty-state p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 28px; }
+  .shop-link { display: inline-flex; align-items: center; gap: 10px; background: var(--green-deep); color: white; text-decoration: none; padding: 14px 32px; border-radius: 50px; font-size: 0.95rem; font-weight: 600; transition: all 0.25s; }
+  .shop-link:hover { background: var(--green-mid); transform: translateY(-2px); }
+
+  /* ── SUMMARY SIDEBAR ── */
+  .summary { background: white; border-radius: 22px; border: 1px solid rgba(82,183,136,0.12); padding: 28px; position: sticky; top: 78px; }
+  .summary h3 { font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--green-deep); margin-bottom: 22px; padding-bottom: 16px; border-bottom: 1px solid rgba(82,183,136,0.12); }
+
+  .summary-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 0.9rem; color: var(--text-muted); }
+  .summary-row.total { margin-top: 18px; padding-top: 18px; border-top: 2px solid rgba(82,183,136,0.2); font-size: 1.05rem; font-weight: 700; color: var(--green-deep); }
+  .summary-row.total span:last-child { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--green-deep); }
+
+  .free-tag { display: inline-block; background: rgba(82,183,136,0.12); color: var(--green-mid); font-size: 0.78rem; font-weight: 700; padding: 2px 10px; border-radius: 20px; }
+  .free-delivery { background: rgba(82,183,136,0.08); border: 1px solid rgba(82,183,136,0.2); color: var(--green-mid); border-radius: 10px; padding: 10px 14px; font-size: 0.82rem; font-weight: 600; text-align: center; margin: 16px 0; }
+
+  /* ── PLACE ORDER BUTTON ── */
+  .checkout-btn {
+    display: block; width: 100%; background: var(--green-deep); color: white;
+    text-align: center; padding: 15px; border-radius: 50px;
+    font-size: 1rem; font-weight: 600; border: none; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; transition: all 0.25s;
+    margin-bottom: 10px; box-shadow: 0 6px 20px rgba(26,61,43,0.25);
+    letter-spacing: 0.2px;
+  }
+  .checkout-btn:hover { background: var(--green-mid); transform: translateY(-2px); box-shadow: 0 10px 28px rgba(26,61,43,0.35); }
+
+  .continue-link { display: block; text-align: center; color: var(--text-muted); text-decoration: none; font-size: 0.87rem; padding: 10px; transition: color 0.2s; }
+  .continue-link:hover { color: var(--green-mid); }
+  .clear-link { display: block; text-align: center; color: #c0392b; text-decoration: none; font-size: 0.8rem; padding: 8px; border-radius: 50px; transition: all 0.2s; margin-top: 2px; }
+  .clear-link:hover { background: rgba(192,57,43,0.06); }
+
+  /* ── BILL DOWNLOAD SECTION ── */
+  .bill-section {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1.5px dashed rgba(82,183,136,0.25);
+  }
+  .bill-section-title {
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.6px;
+    text-transform: uppercase; color: var(--text-muted);
+    text-align: center; margin-bottom: 14px;
+  }
+  .bill-download-btn {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    width: 100%; padding: 14px 20px; border-radius: 50px;
+    background: linear-gradient(135deg, #1a3d2b, #2d6a4f);
+    color: white; text-decoration: none;
+    font-size: 0.95rem; font-weight: 600; font-family: 'DM Sans', sans-serif;
+    border: none; cursor: pointer;
+    transition: all 0.25s;
+    box-shadow: 0 6px 20px rgba(26,61,43,0.28);
+    letter-spacing: 0.2px;
+  }
+  .bill-download-btn:hover {
+    background: linear-gradient(135deg, #2d6a4f, #52b788);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(26,61,43,0.38);
+  }
+  .bill-download-btn svg { flex-shrink: 0; }
+  .bill-note {
+    text-align: center; font-size: 0.73rem; color: var(--text-muted);
+    margin-top: 9px; line-height: 1.5;
+  }
+
+  /* ── SUCCESS OVERLAY ── */
+  .overlay { display: none; position: fixed; inset: 0; z-index: 200; background: rgba(13,31,23,0.6); backdrop-filter: blur(6px); align-items: center; justify-content: center; }
+  .overlay.open { display: flex; }
+  .success-modal {
+    background: white; border-radius: 28px; padding: 50px 44px;
+    text-align: center; max-width: 420px; width: 90%;
+    animation: pop 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+  @keyframes pop { from { opacity:0; transform:scale(0.82); } to { opacity:1; transform:scale(1); } }
+  .success-icon { font-size: 4.5rem; margin-bottom: 16px; display: block; }
+  .success-modal h2 { font-family: 'Playfair Display', serif; font-size: 1.9rem; color: var(--green-deep); margin-bottom: 10px; }
+  .success-modal p { color: var(--text-muted); font-size: 0.92rem; line-height: 1.65; margin-bottom: 28px; }
+  .modal-actions { display: flex; flex-direction: column; gap: 10px; }
+  .modal-bill-btn {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    padding: 14px 28px; border-radius: 50px;
+    background: linear-gradient(135deg, #1a3d2b, #2d6a4f);
+    color: white; text-decoration: none;
+    font-size: 0.95rem; font-weight: 600; font-family: 'DM Sans', sans-serif;
+    transition: all 0.22s; box-shadow: 0 6px 20px rgba(26,61,43,0.25);
+  }
+  .modal-bill-btn:hover { background: linear-gradient(135deg,#2d6a4f,#52b788); transform: translateY(-1px); }
+  .modal-shop-btn {
+    display: block; padding: 10px; color: var(--text-muted);
+    text-decoration: none; font-size: 0.85rem;
+    border-radius: 50px; transition: color 0.2s;
+  }
+  .modal-shop-btn:hover { color: var(--green-mid); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .cart-layout { grid-template-columns: 1fr; }
+    .summary { position: static; }
+    .topbar { padding: 13px 16px; }
+    .page { padding: 28px 16px 60px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════ TOPBAR ══════════ -->
+<div class="topbar">
+  <a href="/dashboard" class="topbar-logo">Fresh<span>Cart</span> 🛒</a>
+  <div class="topbar-right">
+    <a href="/dashboard" class="nav-link">🏠 Home</a>
+    <a href="/shop"      class="nav-link">🛍️ Shop</a>
+    <a href="/logout"    class="logout-btn">Logout</a>
+  </div>
+</div>
+
+<!-- ══════════ PAGE ══════════ -->
+<div class="page">
+  <h1 class="page-title">Your Cart 🛍️</h1>
+  <p class="page-sub">
+    {% if cart %}
+      {{ cart_count }} item{{ 's' if cart_count != 1 }} in your cart
+    {% else %}
+      Your cart is empty
+    {% endif %}
+  </p>
+
+  {% if cart %}
+  <div class="cart-layout">
+
+    <!-- ── LEFT: Items ── -->
+    <div class="cart-items">
+      {% for item in cart %}
+      <div class="cart-item">
+        <div class="item-emoji">{{ item.emoji }}</div>
+        <div class="item-info">
+          <div class="item-name">{{ item.name }}</div>
+          <div class="item-unit-price">&#8377;{{ item.price }} per unit</div>
+        </div>
+        <div class="item-controls">
+          <a href="/decrease/{{ item.name }}" class="qty-btn">&#8722;</a>
+          <span class="qty-num">{{ item.qty }}</span>
+          <a href="/increase/{{ item.name }}" class="qty-btn">&#43;</a>
+        </div>
+        <div class="item-subtotal">&#8377;{{ item.price * item.qty }}</div>
+        <a href="/remove/{{ item.name }}" class="remove-btn" title="Remove item">&#10005;</a>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- ── RIGHT: Summary + Bill ── -->
+    <aside class="summary">
+      <h3>Order Summary</h3>
+
+      <div class="summary-row">
+        <span>Subtotal ({{ cart_count }} item{{ 's' if cart_count != 1 }})</span>
+        <span>&#8377;{{ total }}</span>
+      </div>
+      <div class="summary-row">
+        <span>Delivery Fee</span>
+        <span class="free-tag">FREE</span>
+      </div>
+      <div class="summary-row">
+        <span>GST / Taxes</span>
+        <span>&#8377;0</span>
+      </div>
+
+      <div class="free-delivery">🚚 Free delivery on all orders!</div>
+
+      <div class="summary-row total">
+        <span>Grand Total</span>
+        <span>&#8377;{{ total }}</span>
+      </div>
+
+      <!-- Place Order -->
+      <button class="checkout-btn" onclick="document.getElementById('successOverlay').classList.add('open')">
+        &#10003; Place Order
+      </button>
+      <a href="/shop"      class="continue-link">&#8592; Continue Shopping</a>
+      <a href="/clear_cart" class="clear-link">🗑️ Clear entire cart</a>
+
+      <!-- ── BILL DOWNLOAD ── -->
+      <div class="bill-section">
+        <div class="bill-section-title">&#128196; Download Your Bill</div>
+        <a href="/bill" class="bill-download-btn" target="_blank">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Download Invoice PDF
+        </a>
+        <p class="bill-note">A professional A4 invoice PDF will download<br>instantly to your device.</p>
+      </div>
+
+    </aside>
+  </div>
+
+  {% else %}
+  <!-- ── EMPTY STATE ── -->
+  <div class="empty-state">
+    <span class="empty-icon">🛒</span>
+    <h3>Your cart is empty</h3>
+    <p>Looks like you haven't added anything yet.<br>Head to the shop and pick your favourites!</p>
+    <a href="/shop" class="shop-link">Start Shopping &#8594;</a>
+  </div>
+  {% endif %}
+
+</div>
+
+<!-- ══════════ SUCCESS OVERLAY ══════════ -->
+<div class="overlay" id="successOverlay">
+  <div class="success-modal">
+    <span class="success-icon">&#127881;</span>
+    <h2>Order Placed!</h2>
+    <p>
+      Your fresh groceries are on their way!<br>
+      Estimated delivery: <strong>30 – 45 minutes</strong>.<br><br>
+      Download your invoice PDF below.
+    </p>
+    <div class="modal-actions">
+      <a href="/bill" class="modal-bill-btn" target="_blank">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        Download Invoice PDF
+      </a>
+      <a href="/clear_cart" class="modal-shop-btn">&#8592; Back to Shop</a>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

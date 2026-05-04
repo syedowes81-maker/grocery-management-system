@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>{{product.name}}</title>
+
+<style>
+body {
+    font-family: Arial;
+    background: #0f172a;
+    color: white;
+    padding: 40px;
+}
+
+.container {
+    display: flex;
+    gap: 40px;
+}
+
+img {
+    width: 400px;
+    border-radius: 15px;
+}
+
+.info {
+    max-width: 500px;
+}
+
+.price {
+    color: #22c55e;
+    font-size: 24px;
+}
+
+button {
+    padding: 12px;
+    width: 200px;
+    background: #22c55e;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <img src="{{product.image}}">
+
+    <div class="info">
+        <h1>{{product.name}}</h1>
+
+        <div class="price">₹{{product.price}}</div>
+
+        <p><b>Brand:</b> FreshCart</p>
+        <p><b>Weight:</b> 1kg</p>
+        <p><b>Origin:</b> India</p>
+        <p><b>Allergen:</b> None</p>
+
+        <p><b>Rating:</b> ⭐⭐⭐⭐☆ (4.3)</p>
+
+        <p>
+        Fresh and high-quality {{product.name}} sourced directly from farms.
+        Perfect for daily use with guaranteed freshness.
+        </p>
+
+        <button>Add to Cart</button>
+
+    </div>
+
+</div>
+
+</body>
+</html>

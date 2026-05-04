@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shop – FreshCart</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green-deep: #1a3d2b;
+    --green-mid: #2d6a4f;
+    --green-fresh: #52b788;
+    --green-light: #95d5b2;
+    --cream: #f8f5ef;
+    --text-dark: #0d1f17;
+    --text-muted: #6b8c78;
+    --sidebar-w: 240px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text-dark); }
+
+  /* TOP BAR */
+  .topbar {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(248,245,239,0.95);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(82,183,136,0.18);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 13px 28px; gap: 20px;
+  }
+  .topbar-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem; font-weight: 900;
+    color: var(--green-deep); text-decoration: none; white-space: nowrap;
+  }
+  .topbar-logo span { color: var(--green-fresh); }
+  .search-wrap { flex: 1; max-width: 460px; position: relative; }
+  .search-wrap input {
+    width: 100%; padding: 10px 18px 10px 42px;
+    border: 1.5px solid rgba(82,183,136,0.25); border-radius: 50px;
+    background: white; font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem; color: var(--text-dark); outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .search-wrap input:focus {
+    border-color: var(--green-fresh);
+    box-shadow: 0 0 0 3px rgba(82,183,136,0.12);
+  }
+  .search-wrap input::placeholder { color: var(--text-muted); }
+  .search-icon {
+    position: absolute; left: 14px; top: 50%;
+    transform: translateY(-50%); font-size: 1rem; pointer-events: none;
+  }
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+  .cart-btn {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--green-deep); color: var(--cream);
+    text-decoration: none; padding: 9px 20px; border-radius: 50px;
+    font-size: 0.88rem; font-weight: 600;
+    transition: background 0.2s, transform 0.2s; white-space: nowrap;
+  }
+  .cart-btn:hover { background: var(--green-mid); transform: translateY(-1px); }
+  .cart-count {
+    background: var(--green-fresh); color: white;
+    font-size: 0.72rem; font-weight: 700;
+    width: 20px; height: 20px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .home-btn {
+    color: var(--text-muted); text-decoration: none;
+    font-size: 0.88rem; font-weight: 500; padding: 9px 16px;
+    border-radius: 50px; border: 1px solid rgba(82,183,136,0.2);
+    transition: all 0.2s;
+  }
+  .home-btn:hover { background: rgba(82,183,136,0.08); color: var(--green-mid); }
+
+  /* LAYOUT */
+  .layout { display: flex; min-height: calc(100vh - 58px); }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: var(--sidebar-w); flex-shrink: 0;
+    background: white; border-right: 1px solid rgba(82,183,136,0.12);
+    padding: 24px 0;
+    position: sticky; top: 58px;
+    height: calc(100vh - 58px); overflow-y: auto;
+  }
+  .sidebar h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem; color: var(--green-deep);
+    padding: 0 20px 14px; border-bottom: 1px solid rgba(82,183,136,0.1);
+    margin-bottom: 6px;
+  }
+  .cat-link {
+    display: flex; align-items: center; gap: 10px;
+    padding: 11px 20px; text-decoration: none;
+    color: var(--text-muted); font-size: 0.91rem; font-weight: 500;
+    transition: all 0.18s; border-left: 3px solid transparent;
+  }
+  .cat-link:hover {
+    background: rgba(82,183,136,0.07);
+    color: var(--green-mid); border-left-color: var(--green-fresh);
+  }
+  .cat-link.active {
+    background: rgba(82,183,136,0.1);
+    color: var(--green-deep); font-weight: 600;
+    border-left-color: var(--green-deep);
+  }
+
+  /* CONTENT */
+  .content { flex: 1; padding: 24px 28px; min-width: 0; }
+  .content-header { margin-bottom: 20px; }
+  .content-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.75rem; color: var(--green-deep); letter-spacing: -0.5px;
+  }
+  .product-count { font-size: 0.84rem; color: var(--text-muted); margin-top: 2px; }
+
+  /* GRID */
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));
+    gap: 18px;
+  }
+
+  /* CARD */
+  .product-card {
+    background: white; border-radius: 16px; overflow: hidden;
+    border: 1px solid rgba(82,183,136,0.1);
+    transition: all 0.3s cubic-bezier(0.34, 1.2, 0.64, 1);
+    cursor: pointer; animation: fadeIn 0.4s ease both;
+  }
+  .product-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 14px 36px rgba(82,183,136,0.18);
+    border-color: rgba(82,183,136,0.3);
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .card-img {
+    height: 120px;
+    background: linear-gradient(135deg, #e8f5ee, #d4f0e2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 3.2rem;
+  }
+  .card-body { padding: 12px 14px 14px; }
+  .card-cat {
+    font-size: 0.68rem; color: var(--green-fresh);
+    font-weight: 600; letter-spacing: 0.5px;
+    text-transform: uppercase; margin-bottom: 3px;
+  }
+  .card-name {
+    font-size: 0.9rem; font-weight: 600;
+    color: var(--green-deep); margin-bottom: 10px; line-height: 1.3;
+  }
+  .card-footer { display: flex; align-items: center; justify-content: space-between; }
+  .card-price {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem; font-weight: 700; color: var(--green-deep);
+  }
+  .card-price small {
+    font-size: 0.72rem; color: var(--text-muted);
+    font-family: 'DM Sans', sans-serif; font-weight: 400;
+  }
+  .add-btn {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--green-deep); color: white;
+    display: inline-flex; align-items: center; justify-content: center;
+    text-decoration: none; font-size: 1.3rem; font-weight: 300; line-height: 1;
+    transition: all 0.2s; flex-shrink: 0;
+  }
+  .add-btn:hover { background: var(--green-fresh); transform: scale(1.15) rotate(90deg); }
+
+  /* NO RESULTS */
+  .no-results {
+    grid-column: 1/-1; text-align: center;
+    padding: 80px 20px; color: var(--text-muted);
+  }
+  .no-results .nr-emoji { font-size: 3.5rem; display: block; margin-bottom: 12px; }
+  .no-results p { font-size: 1rem; }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; z-index: 200;
+    background: rgba(13,31,23,0.55); backdrop-filter: blur(5px);
+    align-items: center; justify-content: center; padding: 20px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: white; border-radius: 24px;
+    max-width: 460px; width: 100%; overflow: hidden;
+    animation: modal-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    position: relative;
+  }
+  @keyframes modal-in {
+    from { opacity: 0; transform: scale(0.88) translateY(20px); }
+    to   { opacity: 1; transform: scale(1)   translateY(0); }
+  }
+  .modal-img {
+    height: 180px;
+    background: linear-gradient(135deg, #e8f5ee, #d4f0e2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 5.5rem;
+  }
+  .modal-close {
+    position: absolute; top: 12px; right: 12px;
+    width: 34px; height: 34px; background: rgba(255,255,255,0.9);
+    border: none; border-radius: 50%; font-size: 1rem; cursor: pointer;
+    z-index: 10; display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s;
+  }
+  .modal-close:hover { background: white; }
+  .modal-body { padding: 24px 28px 28px; }
+  .modal-cat {
+    font-size: 0.72rem; font-weight: 600; letter-spacing: 0.5px;
+    text-transform: uppercase; color: var(--green-fresh); margin-bottom: 5px;
+  }
+  .modal-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.65rem; font-weight: 900; color: var(--green-deep);
+    letter-spacing: -0.5px; margin-bottom: 8px;
+  }
+  .modal-desc {
+    font-size: 0.88rem; color: var(--text-muted);
+    line-height: 1.65; margin-bottom: 18px;
+  }
+  .modal-price-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 0; border-top: 1px solid rgba(82,183,136,0.12);
+    border-bottom: 1px solid rgba(82,183,136,0.12); margin-bottom: 20px;
+  }
+  .modal-price {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.9rem; font-weight: 900; color: var(--green-deep);
+  }
+  .modal-badge {
+    background: rgba(82,183,136,0.12); color: var(--green-mid);
+    font-size: 0.76rem; font-weight: 600;
+    padding: 5px 13px; border-radius: 50px; letter-spacing: 0.3px;
+  }
+  .modal-add-btn {
+    display: block; width: 100%; background: var(--green-deep); color: white;
+    text-decoration: none; text-align: center; padding: 15px; border-radius: 50px;
+    font-size: 0.98rem; font-weight: 600; letter-spacing: 0.2px;
+    transition: all 0.22s;
+  }
+  .modal-add-btn:hover {
+    background: var(--green-mid); transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(26,61,43,0.25);
+  }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 28px; right: 28px; z-index: 300;
+    background: var(--green-deep); color: white;
+    padding: 13px 22px; border-radius: 50px;
+    font-size: 0.88rem; font-weight: 500;
+    display: flex; align-items: center; gap: 8px;
+    box-shadow: 0 8px 28px rgba(26,61,43,0.35);
+    transform: translateY(80px); opacity: 0;
+    transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    pointer-events: none;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  @media (max-width: 700px) {
+    .sidebar { display: none; }
+    .products-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <a href="/dashboard" class="topbar-logo">Fresh<span>Cart</span> 🛒</a>
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="searchInput" placeholder="Search products…" oninput="filterProducts()">
+  </div>
+  <div class="topbar-right">
+    <a href="/dashboard" class="home-btn">🏠 Home</a>
+    <a href="/cart" class="cart-btn">
+      🛍️ Cart <span class="cart-count">{{ cart_count }}</span>
+    </a>
+  </div>
+</div>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <h3>Categories</h3>
+    <a href="/shop" class="cat-link {% if not selected %}active{% endif %}">
+      🛒 All Products
+    </a>
+    {% for category in all_categories %}
+    <a href="{{ url_for('shop', category=category) }}"
+       class="cat-link {% if selected == category %}active{% endif %}">
+      {% if category == 'Fruits' %}🍎
+      {% elif category == 'Vegetables' %}🥦
+      {% elif category == 'Dairy' %}🥛
+      {% elif category == 'Meat' %}🍗
+      {% elif category == 'Snacks' %}🍿
+      {% elif category == 'Beverages' %}🧃
+      {% else %}📦{% endif %}
+      {{ category }}
+    </a>
+    {% endfor %}
+  </aside>
+
+  <!-- CONTENT -->
+  <main class="content">
+    <div class="content-header">
+      <h2>{% if selected %}{{ selected }}{% else %}All Products{% endif %}</h2>
+      <div class="product-count" id="productCount"></div>
+    </div>
+
+    <div class="products-grid" id="productsGrid">
+      {% for category, items in products.items() %}
+        {% for item in items %}
+          <div class="product-card"
+               data-name="{{ item.name }}"
+               data-category="{{ category }}"
+               data-price="{{ item.price }}"
+               data-emoji="{{ item.emoji if item.emoji else '📦' }}"
+               data-desc="{{ item.desc if item.desc else 'Fresh quality ' ~ item.name }}"
+               onclick="openModal(this)">
+            <div class="card-img">{{ item.emoji if item.emoji else '📦' }}</div>
+            <div class="card-body">
+              <div class="card-cat">{{ category }}</div>
+              <div class="card-name">{{ item.name }}</div>
+              <div class="card-footer">
+                <div class="card-price">₹{{ item.price }} <small>/unit</small></div>
+                <a href="{{ url_for('add_to_cart', name=item.name, price=item.price) }}"
+                   class="add-btn"
+                   onclick="event.stopPropagation();"
+                   title="Add to cart">+</a>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      {% endfor %}
+    </div>
+  </main>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
+  <div class="modal" id="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-img" id="modalEmoji"></div>
+    <div class="modal-body">
+      <div class="modal-cat" id="modalCat"></div>
+      <div class="modal-name" id="modalName"></div>
+      <div class="modal-desc" id="modalDesc"></div>
+      <div class="modal-price-row">
+        <div class="modal-price" id="modalPrice"></div>
+        <div class="modal-badge">✓ In Stock</div>
+      </div>
+      <a href="#" class="modal-add-btn" id="modalAddBtn">+ Add to Cart</a>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">✅ Added to cart!</div>
+
+<script>
+  // COUNT ON LOAD
+  window.addEventListener('DOMContentLoaded', () => {
+    updateCount();
+  });
+
+  function updateCount() {
+    const visible = document.querySelectorAll('.product-card:not([style*="display: none"])').length;
+    document.getElementById('productCount').textContent =
+      visible + ' product' + (visible !== 1 ? 's' : '');
+  }
+
+  // SEARCH
+  function filterProducts() {
+    const q = document.getElementById('searchInput').value.toLowerCase().trim();
+    document.querySelectorAll('.product-card').forEach(c => {
+      const match = c.dataset.name.toLowerCase().includes(q) ||
+                    c.dataset.category.toLowerCase().includes(q);
+      c.style.display = match ? '' : 'none';
+    });
+
+    // show/hide no-results
+    let noRes = document.getElementById('noResults');
+    const anyVisible = document.querySelectorAll('.product-card:not([style*="display: none"])').length;
+    if (anyVisible === 0 && q) {
+      if (!noRes) {
+        noRes = document.createElement('div');
+        noRes.id = 'noResults';
+        noRes.className = 'no-results';
+        noRes.innerHTML = '<span class="nr-emoji">🔍</span><p>No products found for "<strong>' + q + '</strong>"</p>';
+        document.getElementById('productsGrid').appendChild(noRes);
+      }
+    } else if (noRes) {
+      noRes.remove();
+    }
+    updateCount();
+  }
+
+  // MODAL
+  function openModal(card) {
+    document.getElementById('modalEmoji').textContent = card.dataset.emoji;
+    document.getElementById('modalCat').textContent   = card.dataset.category;
+    document.getElementById('modalName').textContent  = card.dataset.name;
+    document.getElementById('modalDesc').textContent  = card.dataset.desc;
+    document.getElementById('modalPrice').textContent = '₹' + card.dataset.price;
+    document.getElementById('modalAddBtn').href =
+      '/add_to_cart/' + encodeURIComponent(card.dataset.name) + '/' + card.dataset.price;
+    document.getElementById('modalOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function closeModalOutside(e) {
+    if (e.target === document.getElementById('modalOverlay')) closeModal();
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeModal();
+  });
+</script>
+
+</body>
+</html>
