@@ -1,3 +1,17 @@
+"""
+FreshCart
+
+A Grocery Management System built using Flask.
+
+Features:
+- User Authentication
+- Product Management
+- Shopping Cart
+- Order Management
+
+Author: Syed Owesjaleel
+GitHub: https://github.com/<your-github-username>
+"""
 import io
 import sqlite3
 import os
@@ -424,7 +438,34 @@ def add_to_cart(name, price):
     db_add_to_cart(session["user"], name)
     return redirect(url_for("shop"))
 
+@app.route("/health")
+def health():
+    try:
+        db = get_db()
+        db.execute("SELECT 1")
 
+        return {
+            "application": "FreshCart",
+            "version": "1.0.0",
+            "status": "healthy",
+            "database": "connected"
+        }
+
+    except Exception:
+        return {
+            "application": "FreshCart",
+            "version": "1.0.0",
+            "status": "unhealthy",
+            "database": "disconnected"
+        }, 500
+@app.route("/version")
+def version():
+    return {
+        "application": "FreshCart",
+        "version": "1.0.0",
+        "framework": "Flask",
+        "python": "3.11"
+    }
 @app.route("/increase/<string:name>")
 def increase(name):
     if "user" not in session:
@@ -704,6 +745,10 @@ def order_history():
 # ─────────────────────────────────────────────────────────────────────────────
 #  ENTRY POINT
 # ─────────────────────────────────────────────────────────────────────────────
+@app.errorhandler(404)
+def page_not_found(error):
+    return render_template("404.html"), 404
+
 if __name__ == "__main__":
     init_db()
     app.run(debug=True)
