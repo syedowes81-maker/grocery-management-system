@@ -78,7 +78,7 @@ Developed by **Syed Owes Jaleel** as a personal learning project.
 
 ### Product Details
 
-![Product Details](screenshots/product_info.png)
+![Product Details](screenshots/productinfo.png)
 
 ### Shopping Cart
 
