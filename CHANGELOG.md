@@ -1,13 +1,22 @@
 # Changelog
 
-## v1.0.0
+All notable changes to this project will be documented here.
 
-### Initial Release
+## Version 1.0.0 - July 2026
 
-- User Authentication
-- Grocery Product Management
-- Shopping Cart
-- Dashboard
-- Order Management
-- PDF Invoice Generation
-- Flask Deployment
+### Added
+- User authentication
+- Product browsing by category
+- Shopping cart functionality
+- Order placement
+- PDF invoice generation
+- User dashboard
+- Health check endpoint
+- Version endpoint
+- Custom 404 page
+
+### Documentation
+- Added project README
+- Added project screenshots
+- Added MIT License
+- Updated .gitignore
